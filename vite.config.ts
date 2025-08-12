@@ -15,7 +15,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://192.168.0.114', // Убрал дублированное http://
+        target: 'http://192.168.1.182', // Убрал дублированное http://
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {

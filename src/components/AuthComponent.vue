@@ -2,31 +2,31 @@
   <div class="auth-container">
     <div class="auth-card">
       <h2>Авторизация</h2>
-      
+
       <div v-if="!isUserAuthenticated" class="login-section">
         <p>Для доступа к приложению необходимо войти в систему</p>
         <button @click="handleLogin" class="login-btn">
           Войти через SSO
         </button>
       </div>
-      
+
       <div v-else class="user-info">
         <h3>Добро пожаловать!</h3>
         <p><strong>Пользователь:</strong> {{ userInfo?.preferred_username || 'N/A' }}</p>
         <p><strong>Email:</strong> {{ userInfo?.email || 'N/A' }}</p>
         <p><strong>Роли:</strong> {{ userRoles }}</p>
-        
+
         <div class="token-section">
           <h4>Access Token:</h4>
-          <textarea 
-            :value="token" 
-            readonly 
-            rows="4" 
+          <textarea
+            :value="token"
+            readonly
+            rows="4"
             class="token-display"
             placeholder="Токен не получен"
           ></textarea>
         </div>
-        
+
         <div class="actions">
           <button @click="handleLogout" class="logout-btn">
             Выйти
@@ -35,12 +35,12 @@
             {{ apiLoading ? 'Загрузка...' : 'Тест API /api/user' }}
           </button>
         </div>
-        
+
         <div v-if="apiResponse" class="api-response">
           <h4>Ответ API:</h4>
           <pre>{{ JSON.stringify(apiResponse, null, 2) }}</pre>
         </div>
-        
+
         <div v-if="apiError" class="api-error">
           <h4>Ошибка API:</h4>
           <p>{{ apiError }}</p>
@@ -52,12 +52,12 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { 
-  loginKeycloak, 
-  logoutKeycloak, 
-  isAuthenticated, 
-  getToken, 
-  getUserInfo 
+import {
+  loginKeycloak,
+  logoutKeycloak,
+  isAuthenticated,
+  getToken,
+  getUserInfo
 } from '@/services/keycloak'
 import { apiClient } from '@/services/api'
 
@@ -87,7 +87,7 @@ const testApi = async () => {
   apiLoading.value = true
   apiError.value = ''
   apiResponse.value = null
-  
+
   try {
     const response = await apiClient.get('/user')
     apiResponse.value = response
@@ -103,7 +103,7 @@ const updateAuthState = () => {
   isUserAuthenticated.value = isAuthenticated()
   token.value = getToken()
   userInfo.value = getUserInfo()
-  
+
   // Логируем изменения состояния
   if (wasAuthenticated !== isUserAuthenticated.value) {
     console.log('Auth state changed:', isUserAuthenticated.value)
@@ -122,13 +122,13 @@ let intervalId: number
 
 onMounted(() => {
   updateAuthState()
-  
+
   // Проверяем состояние каждые 2 секунды
   intervalId = setInterval(updateAuthState, 2000)
-  
+
   // Слушаем изменения в sessionStorage
   window.addEventListener('storage', handleStorageChange)
-  
+
   // Также проверяем при получении фокуса окна
   window.addEventListener('focus', updateAuthState)
 })
